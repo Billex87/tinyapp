@@ -1,14 +1,27 @@
 <header>
-  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <!-- change the colour of the logo -->
     <a class="navbar-brand" href="/urls">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav mr-auto mt-2 mt-lg-0">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
+      <% if (username) { %>
+      <p class="nav navbar-text">Hi, <%= username %>!    </p>
+      <form class="form-inline my-2 my-lg-0" method= "POST" action="/logout">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+      </form>
+      <%  } else { %>
+      <form class="form-inline my-2 my-lg-0" method= "POST" action="/login">
+        <input class="form-control mr-sm-2" type="text" name="username" placeholder="King_James">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sign in</button>
+      </form>
+      <%  } %>
     </div>
+   
   </nav>
 </header>

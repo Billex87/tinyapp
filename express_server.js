@@ -27,7 +27,18 @@ app.set("view engine", "ejs");
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
-})
+});
+app.post("/urls/edit/:shortURL", (req, res) => {
+const edittedURL= req.body.URL;
+const shortURL = req.params.shortURL;
+urlDatabase[shortURL] = edittedURL;
+res.redirect("/urls")
+});
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.newLongUrl;
+  res.redirect("/urls");
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];

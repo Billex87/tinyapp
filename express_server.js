@@ -27,6 +27,9 @@ const users = {
 };
 
 // Read Routes
+app.get("/", (req, res) => {
+  res.redirect("/urls");
+});
 app.get("/register", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
@@ -44,13 +47,12 @@ app.get("/login", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
+  console.log('1',longURL);
   res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
   const id = req.session["user_id"];
   const user = users[req.session["user_id"]];
-  console.log(urlDatabase);
-  console.log(id);
   const templateVars = {
     urls: urlsForUser(id, urlDatabase),
     user
@@ -58,13 +60,13 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 app.get("/urls/new", (req, res) => {
-  const user = users[req.session["user_id"]]
+  const user = users[req.session["user_id"]];
   const templateVars = {
     user
   };
   if (!user) {
-    res.redirect('/login')
-  };
+    res.redirect('/login');
+  }
   res.render("urls_new", templateVars);
 });
 app.get("/urls/:shortURL", (req, res) => {
@@ -97,7 +99,6 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: hashedPassword
   };
-  console
   req.session.user_id = newUserRandomID;
   res.redirect('/urls');
 });
@@ -106,11 +107,9 @@ app.post("/login", (req, res) => {
   if (!user) {
     res.status(403).send('Email Not Found');
     return;
-  } console.log(req.body.email);
-    console.log(user.password);
-    const passwordGood = bcrypt.compareSync(req.body.password, user.password);
-    console.log(passwordGood);
-  if (!passwordGood) { 
+  }
+  const passwordGood = bcrypt.compareSync(req.body.password, user.password);
+  if (!passwordGood) {
     res.status(403).send('Incorrect Password');
     return;
   }
@@ -129,11 +128,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id]['longURL'] = req.body.longURL;
-  res.redirect("/urls");
-});
-app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
+  urlDatabase[req.params.id].longURL = req.body.longURL;
   res.redirect("/urls");
 });
 

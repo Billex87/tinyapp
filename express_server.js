@@ -116,10 +116,6 @@ app.post("/login", (req, res) => {
   req.session.user_id = user.id;
   return res.redirect('/urls');
 });
-app.post("/logout", (req, res) => {
-  req.session = null;
-  res.redirect("/urls");
-});
 app.post("/urls", (req, res) => {
   const id = req.session.user_id;
   const longURL = req.body.longURL;
@@ -131,12 +127,16 @@ app.post("/urls/:id", (req, res) => {
   urlDatabase[req.params.id].longURL = req.body.longURL;
   res.redirect("/urls");
 });
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/urls");
+});
 
 //Listen DO NOT TOUCH
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
+// Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userDb = urlsForUser(req.session.user_id, urlDatabase);
   if (req.params.shortURL in userDb) {

@@ -21,16 +21,17 @@ const generateRandomString = () => {
 };
 
 // Stores URL Info Under Specific userID
-const urlsForUser = (id, database) => {
+const urlsForUser = (ID, database) => {
   const userDb = {};
   for (let key in database) {
-    if (database[key].userID === id) {
+    if (database[key].userID === ID) {
       userDb[key] = {
         longURL: database[key].longURL,
-        userID: id
+        userID: ID
       };
     }
-  } return userDb;
+  } 
+  return userDb;
 };
 
 module.exports = { getUserByEmail, generateRandomString, urlsForUser };

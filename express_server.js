@@ -18,7 +18,7 @@ const urlDatabase = {
 
 const users = {
   "theHair": {
-    id: "theHair",
+    ID: "theHair",
     email: "donald@trump.com",
     password: "dtrump"
   }
@@ -30,15 +30,13 @@ app.get("/", (req, res) => {
 });
 app.get("/register", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies["user_id"]]
+    user: users[req.sessionOptions.user_ID]
   };
   res.render("urls_register", templateVars);
 });
 app.get("/login", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies["user_id"]]
+    user: users[req.sessionOptions.user_ID]
   };
   res.render("urls_login", templateVars);
 });
@@ -48,16 +46,17 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 app.get("/urls", (req, res) => {
-  const id = req.session["user_id"];
-  const user = users[req.session["user_id"]];
+  const ID = req.session["user_ID"];
+  const user = users[req.session["user_ID"]];
   const templateVars = {
-    urls: urlsForUser(id, urlDatabase),
+    urls: urlsForUser(ID, urlDatabase),
     user
   };
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 app.get("/urls/new", (req, res) => {
-  const user = users[req.session["user_id"]];
+  const user = users[req.session["user_ID"]];
   const templateVars = {
     user
   };
@@ -69,7 +68,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.session["user_id"]]
+    user: users[req.session["user_ID"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -92,11 +91,11 @@ app.post("/register", (req, res) => {
   }
   const newUserRandomID = generateRandomString();
   users[newUserRandomID] = {
-    id: newUserRandomID,
+    ID: newUserRandomID,
     email: req.body.email,
     password: hashedPassword
   };
-  req.session.user_id = newUserRandomID;
+  req.session.user_ID = newUserRandomID;
   res.redirect('/urls');
 });
 app.post("/login", (req, res) => {
@@ -110,18 +109,18 @@ app.post("/login", (req, res) => {
     res.status(403).send('Incorrect Password');
     return;
   }
-  req.session.user_id = user.id;
+  req.session.user_ID = user.ID;
   return res.redirect('/urls');
 });
 app.post("/urls", (req, res) => {
-  const id = req.session.user_id;
+  const ID = req.session.user_ID;
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = { longURL, userID: id };
+  urlDatabase[shortURL] = { longURL, userID: ID };
   res.redirect(`/urls/${shortURL}`);
 });
-app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id].longURL = req.body.longURL;
+app.post("/urls/:ID", (req, res) => {
+  urlDatabase[req.params.ID].longURL = req.body.longURL;
   res.redirect("/urls");
 });
 app.post("/logout", (req, res) => {
@@ -135,7 +134,7 @@ app.listen(PORT, () => {
 });
 // Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const userDb = urlsForUser(req.session.user_id, urlDatabase);
+  const userDb = urlsForUser(req.session.user_ID, urlDatabase);
   if (req.params.shortURL in userDb) {
     delete urlDatabase[req.params.shortURL];
   } else {
